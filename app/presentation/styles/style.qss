@@ -61,3 +61,16 @@ QTableWidget::item {
 QTableWidget::item:selected {
     background-color: #3b82f6;
 }
+
+QPushButton {
+    padding: 6px;
+    border-radius: 5px;
+}
+
+QPushButton:hover {
+    background-color: #334155;
+}
+
+QPushButton#primary {
+    background-color: #3b82f6;
+}

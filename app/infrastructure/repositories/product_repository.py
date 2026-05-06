@@ -21,3 +21,24 @@ class ProductRepository:
             return session.query(ProductModel).all()
         finally:
             session.close()
+
+    def delete(self, product_id):
+        session = SessionLocal()
+        try:
+            product = session.query(ProductModel).get(product_id)
+            if product:
+                session.delete(product)
+                session.commit()
+        finally:
+            session.close()
+
+    def update(self, product_id, name, price):
+        session = SessionLocal()
+        try:
+            product = session.query(ProductModel).get(product_id)
+            if product:
+                product.name = name
+                product.price = price
+                session.commit()
+        finally:
+            session.close()
