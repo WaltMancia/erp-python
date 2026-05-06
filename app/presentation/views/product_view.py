@@ -23,6 +23,7 @@ class ProductView(QWidget):
         self.price_input.setPlaceholderText("Precio")
 
         self.add_button = QPushButton("Agregar producto")
+        self.add_button.setObjectName("primary")
         self.add_button.clicked.connect(self.add_product)
 
         self.list_widget = QListWidget()

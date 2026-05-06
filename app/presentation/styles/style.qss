@@ -1,0 +1,42 @@
+QWidget {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-size: 14px;
+}
+
+/* Sidebar */
+QPushButton {
+    text-align: left;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+}
+
+QPushButton:hover {
+    background-color: #1e293b;
+}
+
+/* Inputs */
+QLineEdit {
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+}
+
+/* Botón principal */
+QPushButton#primary {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 5px;
+}
+
+QPushButton#primary:hover {
+    background-color: #2563eb;
+}
+
+/* Lista */
+QListWidget {
+    background-color: #1e293b;
+    border: none;
+}
