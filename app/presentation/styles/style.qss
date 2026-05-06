@@ -1,76 +1,91 @@
+/* ===== BASE ===== */
 QWidget {
     background-color: #0f172a;
     color: #e2e8f0;
-    font-size: 14px;
+    font-family: Segoe UI, Arial;
+    font-size: 13px;
 }
 
-/* Sidebar */
-QPushButton {
+/* ===== SIDEBAR ===== */
+QWidget#sidebar {
+    background-color: #020617;
+}
+
+QPushButton#menuButton {
     text-align: left;
-    padding: 10px;
+    padding: 12px 16px;
     border: none;
-    background-color: transparent;
+    color: #cbd5f5;
+    border-radius: 6px;
 }
 
-QPushButton:hover {
+QPushButton#menuButton:hover {
     background-color: #1e293b;
 }
 
-/* Inputs */
+QPushButton#menuButton:checked {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* ===== INPUTS ===== */
 QLineEdit {
+    background-color: #020617;
+    border: 1px solid #1e293b;
     padding: 8px;
-    border-radius: 5px;
-    background-color: #1e293b;
-    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #e2e8f0;
 }
 
-/* Botón principal */
+/* ===== BOTÓN PRINCIPAL ===== */
 QPushButton#primary {
     background-color: #3b82f6;
     color: white;
-    border-radius: 5px;
+    border-radius: 6px;
+    padding: 10px;
 }
 
 QPushButton#primary:hover {
     background-color: #2563eb;
 }
 
-/* Lista */
-QListWidget {
-    background-color: #1e293b;
-    border: none;
+/* ===== BOTONES ACCIÓN ===== */
+QPushButton#editBtn {
+    background-color: #f59e0b;
+    color: black;
+    border-radius: 5px;
+    padding: 5px 8px;
 }
 
+QPushButton#deleteBtn {
+    background-color: #ef4444;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+
+/* ===== TABLA ===== */
 QTableWidget {
-    background-color: #1e293b;
-    border: none;
-    gridline-color: #334155;
+    background-color: #020617;
+    border: 1px solid #1e293b;
+    gridline-color: #1e293b;
+    border-radius: 8px;
 }
 
 QHeaderView::section {
-    background-color: #1e293b;
-    padding: 8px;
+    background-color: #020617;
+    color: #94a3b8;
+    padding: 10px;
     border: none;
     font-weight: bold;
 }
 
 QTableWidget::item {
-    padding: 6px;
+    padding: 8px;
+    color: #e2e8f0;
 }
 
 QTableWidget::item:selected {
     background-color: #3b82f6;
-}
-
-QPushButton {
-    padding: 6px;
-    border-radius: 5px;
-}
-
-QPushButton:hover {
-    background-color: #334155;
-}
-
-QPushButton#primary {
-    background-color: #3b82f6;
+    color: white;
 }

@@ -5,13 +5,15 @@ from PySide6.QtWidgets import (
     QHBoxLayout
 )
 
+from PySide6.QtCore import Qt
+
+
 from app.application.usecases.product_usecases import (
     create_product,
     list_products,
     delete_product,
     update_product
 )
-
 
 class ProductView(QWidget):
     def __init__(self):
@@ -20,6 +22,9 @@ class ProductView(QWidget):
         self.editing_id = None
 
         layout = QVBoxLayout()
+        
+        layout.setSpacing(10)
+        layout.setContentsMargins(15, 15, 15, 15)
 
         # Inputs
         self.name_input = QLineEdit()
@@ -36,11 +41,16 @@ class ProductView(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Nombre", "Precio", "Acciones"])
+        
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
 
         self.table.setAlternatingRowColors(True)
+        
+        self.table.setColumnWidth(2, 200)
+        self.table.setWordWrap(False)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         # Layout
         layout.addWidget(QLabel("Nombre"))
@@ -49,7 +59,7 @@ class ProductView(QWidget):
         layout.addWidget(self.price_input)
         layout.addWidget(self.save_button)
         layout.addWidget(self.table)
-
+       
         self.setLayout(layout)
 
         self.load_products()
@@ -85,9 +95,14 @@ class ProductView(QWidget):
 
             # Botones
             btn_layout = QHBoxLayout()
+            btn_layout.setContentsMargins(0, 0, 0, 0)
+            btn_layout.setSpacing(5)
 
             edit_btn = QPushButton("Editar")
+            edit_btn.setObjectName("editBtn")
+
             delete_btn = QPushButton("Eliminar")
+            delete_btn.setObjectName("deleteBtn")
 
             edit_btn.clicked.connect(lambda _, p=p: self.edit_product(p))
             delete_btn.clicked.connect(lambda _, p=p: self.delete_product_ui(p.id))
