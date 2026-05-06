@@ -1,12 +1,14 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton,
-    QLineEdit, QLabel, QListWidget, QMessageBox
+    QLineEdit, QLabel, QTableWidget,
+    QTableWidgetItem, QMessageBox, QHeaderView
 )
 
 from app.application.usecases.product_usecases import (
     create_product,
     list_products
 )
+
 
 class ProductView(QWidget):
     def __init__(self):
@@ -16,24 +18,37 @@ class ProductView(QWidget):
 
         layout = QVBoxLayout()
 
+        # Inputs
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Nombre del producto")
 
         self.price_input = QLineEdit()
         self.price_input.setPlaceholderText("Precio")
 
+        # Botón
         self.add_button = QPushButton("Agregar producto")
         self.add_button.setObjectName("primary")
         self.add_button.clicked.connect(self.add_product)
 
-        self.list_widget = QListWidget()
+        # Tabla profesional
+        self.table = QTableWidget()
+        self.table.setColumnCount(2)
+        self.table.setHorizontalHeaderLabels(["Nombre", "Precio"])
 
+        # Ajustes PRO
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+
+        self.table.setAlternatingRowColors(True)
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+
+        # Layout
         layout.addWidget(QLabel("Nombre"))
         layout.addWidget(self.name_input)
         layout.addWidget(QLabel("Precio"))
         layout.addWidget(self.price_input)
         layout.addWidget(self.add_button)
-        layout.addWidget(self.list_widget)
+        layout.addWidget(self.table)
 
         self.setLayout(layout)
 
@@ -55,8 +70,10 @@ class ProductView(QWidget):
             QMessageBox.warning(self, "Error", str(e))
 
     def load_products(self):
-        self.list_widget.clear()
         products = list_products()
 
-        for p in products:
-            self.list_widget.addItem(f"{p.name} - Q{p.price}")
+        self.table.setRowCount(len(products))
+
+        for row, p in enumerate(products):
+            self.table.setItem(row, 0, QTableWidgetItem(p.name))
+            self.table.setItem(row, 1, QTableWidgetItem(f"Q{p.price:.2f}"))

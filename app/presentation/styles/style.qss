@@ -40,3 +40,24 @@ QListWidget {
     background-color: #1e293b;
     border: none;
 }
+
+QTableWidget {
+    background-color: #1e293b;
+    border: none;
+    gridline-color: #334155;
+}
+
+QHeaderView::section {
+    background-color: #1e293b;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+}
+
+QTableWidget::item {
+    padding: 6px;
+}
+
+QTableWidget::item:selected {
+    background-color: #3b82f6;
+}
