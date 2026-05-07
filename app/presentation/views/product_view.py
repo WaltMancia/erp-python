@@ -1,12 +1,15 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton,
-    QLineEdit, QLabel, QTableWidget,
-    QTableWidgetItem, QMessageBox, QHeaderView,
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QMessageBox,
+    QHeaderView,
     QHBoxLayout
 )
 
 from PySide6.QtCore import Qt
-
 
 from app.application.usecases.product_usecases import (
     create_product,
@@ -15,78 +18,90 @@ from app.application.usecases.product_usecases import (
     update_product
 )
 
+from app.presentation.dialogs.product_dialog import ProductDialog
+
 
 class ProductView(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.editing_id = None
-
         layout = QVBoxLayout()
 
+        # Espaciado profesional
         layout.setSpacing(10)
         layout.setContentsMargins(15, 15, 15, 15)
 
-        # Inputs
-        self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Nombre del producto")
+        # Botón crear producto
+        self.add_button = QPushButton("Nuevo producto")
+        self.add_button.setObjectName("primary")
+        self.add_button.setMinimumHeight(40)
 
-        self.price_input = QLineEdit()
-        self.price_input.setPlaceholderText("Precio")
-
-        self.save_button = QPushButton("Guardar producto")
-        self.save_button.setObjectName("primary")
-        self.save_button.clicked.connect(self.save_product)
+        self.add_button.clicked.connect(
+            self.open_create_dialog
+        )
 
         # Tabla
         self.table = QTableWidget()
+
         self.table.setColumnCount(3)
-        self.table.setMinimumHeight(350)
-        self.table.verticalHeader().setDefaultSectionSize(50)  # 👈 altura filas
 
-        self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
-        self.table.setHorizontalHeaderLabels(["Nombre", "Precio", "Acciones"])
+        self.table.setHorizontalHeaderLabels([
+            "Nombre",
+            "Precio",
+            "Acciones"
+        ])
 
+        # Configuración PRO tabla
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+
+        header.setSectionResizeMode(
+            0,
+            QHeaderView.Stretch
+        )
+
+        header.setSectionResizeMode(
+            1,
+            QHeaderView.ResizeToContents
+        )
+
+        header.setSectionResizeMode(
+            2,
+            QHeaderView.ResizeToContents
+        )
+
+        self.table.verticalHeader().setVisible(False)
 
         self.table.setAlternatingRowColors(True)
 
-        self.table.setColumnWidth(2, 200)
         self.table.setWordWrap(False)
-        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        self.table.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarAlwaysOff
+        )
+
+        # Altura profesional filas
+        self.table.verticalHeader().setDefaultSectionSize(60)
+
+        # Altura mínima tabla
+        self.table.setMinimumHeight(300)
+
+        # Selección filas completas
+        self.table.setSelectionBehavior(
+            QTableWidget.SelectRows
+        )
+
+        # Desactivar edición inline
+        self.table.setEditTriggers(
+            QTableWidget.NoEditTriggers
+        )
 
         # Layout
-        layout.addWidget(QLabel("Nombre"))
-        layout.addWidget(self.name_input)
-        layout.addWidget(QLabel("Precio"))
-        layout.addWidget(self.price_input)
-        layout.addWidget(self.save_button)
+        layout.addWidget(self.add_button)
         layout.addWidget(self.table)
 
         self.setLayout(layout)
 
         self.load_products()
-
-    def save_product(self):
-        try:
-            name = self.name_input.text()
-            price = float(self.price_input.text())
-
-            if self.editing_id:
-                update_product(self.editing_id, name, price)
-                self.editing_id = None
-                self.save_button.setText("Guardar producto")
-            else:
-                create_product(name, price)
-
-            self.name_input.clear()
-            self.price_input.clear()
-
-            self.load_products()
-
-        except ValueError as e:
-            QMessageBox.warning(self, "Error", str(e))
 
     def load_products(self):
         products = list_products()
@@ -94,52 +109,105 @@ class ProductView(QWidget):
         self.table.setRowCount(len(products))
 
         for row, p in enumerate(products):
-            self.table.setItem(row, 0, QTableWidgetItem(p.name))
-            self.table.setItem(row, 1, QTableWidgetItem(f"Q{p.price:.2f}"))
 
-            # Botones
+            # Nombre
+            self.table.setItem(
+                row,
+                0,
+                QTableWidgetItem(p.name)
+            )
+
+            # Precio
+            self.table.setItem(
+                row,
+                1,
+                QTableWidgetItem(f"Q{p.price:.2f}")
+            )
+
+            # ===== BOTONES =====
+
             btn_layout = QHBoxLayout()
 
-            btn_layout.setContentsMargins(5, 5, 5, 5)
+            btn_layout.setContentsMargins(
+                5, 5, 5, 5
+            )
+
             btn_layout.setSpacing(8)
 
+            # Editar
             edit_btn = QPushButton("Editar")
             edit_btn.setObjectName("editBtn")
-            edit_btn.setMinimumHeight(30)
+            edit_btn.setMinimumHeight(32)
+            edit_btn.setCursor(Qt.PointingHandCursor)
 
+            # Eliminar
             delete_btn = QPushButton("Eliminar")
             delete_btn.setObjectName("deleteBtn")
-            delete_btn.setMinimumHeight(30)
+            delete_btn.setMinimumHeight(32)
+            delete_btn.setCursor(Qt.PointingHandCursor)
 
-            edit_btn.clicked.connect(lambda _, p=p: self.edit_product(p))
+            # Eventos
+            edit_btn.clicked.connect(
+                lambda _, p=p: self.edit_product(p)
+            )
+
             delete_btn.clicked.connect(
-                lambda _, p=p: self.delete_product_ui(p.id))
+                lambda _, p=p: self.delete_product_ui(p.id)
+            )
 
-            btn_layout.addStretch()
+            # Layout botones
             btn_layout.addWidget(edit_btn)
             btn_layout.addWidget(delete_btn)
-            btn_layout.addStretch()
 
             container = QWidget()
             container.setLayout(btn_layout)
 
-            self.table.setCellWidget(row, 2, container)
+            self.table.setCellWidget(
+                row,
+                2,
+                container
+            )
+
+    def open_create_dialog(self):
+        dialog = ProductDialog()
+
+        if dialog.exec():
+
+            data = dialog.get_data()
+
+            create_product(
+                data["name"],
+                data["price"]
+            )
+
+            self.load_products()
 
     def edit_product(self, product):
-        self.editing_id = product.id
-        self.name_input.setText(product.name)
-        self.name_input.setFocus()
-        self.price_input.setText(str(product.price))
-        self.save_button.setText("Actualizar producto")
+        dialog = ProductDialog(product)
+
+        if dialog.exec():
+
+            data = dialog.get_data()
+
+            update_product(
+                product.id,
+                data["name"],
+                data["price"]
+            )
+
+            self.load_products()
 
     def delete_product_ui(self, product_id):
+
         confirm = QMessageBox.question(
             self,
-            "Confirmar",
-            "¿Eliminar producto?",
+            "Confirmar eliminación",
+            "¿Deseas eliminar este producto?",
             QMessageBox.Yes | QMessageBox.No
         )
 
         if confirm == QMessageBox.Yes:
+
             delete_product(product_id)
+
             self.load_products()

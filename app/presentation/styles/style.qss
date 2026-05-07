@@ -90,11 +90,6 @@ QTableWidget::item:selected {
     color: white;
 }
 
-/* ===== HOVER SUAVE ===== */
-QPushButton {
-    transition: all 0.2s ease;
-}
-
 /* Sidebar hover */
 QPushButton#menuButton:hover {
     background-color: #1e293b;
