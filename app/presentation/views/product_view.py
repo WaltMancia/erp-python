@@ -15,6 +15,7 @@ from app.application.usecases.product_usecases import (
     update_product
 )
 
+
 class ProductView(QWidget):
     def __init__(self):
         super().__init__()
@@ -22,7 +23,7 @@ class ProductView(QWidget):
         self.editing_id = None
 
         layout = QVBoxLayout()
-        
+
         layout.setSpacing(10)
         layout.setContentsMargins(15, 15, 15, 15)
 
@@ -40,14 +41,17 @@ class ProductView(QWidget):
         # Tabla
         self.table = QTableWidget()
         self.table.setColumnCount(3)
+        self.table.setMinimumHeight(350)
+        self.table.verticalHeader().setDefaultSectionSize(50)  # 👈 altura filas
+
+        self.table.setStyleSheet("QTableWidget::item { padding: 10px; }")
         self.table.setHorizontalHeaderLabels(["Nombre", "Precio", "Acciones"])
-        
 
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
 
         self.table.setAlternatingRowColors(True)
-        
+
         self.table.setColumnWidth(2, 200)
         self.table.setWordWrap(False)
         self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -59,7 +63,7 @@ class ProductView(QWidget):
         layout.addWidget(self.price_input)
         layout.addWidget(self.save_button)
         layout.addWidget(self.table)
-       
+
         self.setLayout(layout)
 
         self.load_products()
@@ -95,20 +99,26 @@ class ProductView(QWidget):
 
             # Botones
             btn_layout = QHBoxLayout()
-            btn_layout.setContentsMargins(0, 0, 0, 0)
-            btn_layout.setSpacing(5)
+
+            btn_layout.setContentsMargins(5, 5, 5, 5)
+            btn_layout.setSpacing(8)
 
             edit_btn = QPushButton("Editar")
             edit_btn.setObjectName("editBtn")
+            edit_btn.setMinimumHeight(30)
 
             delete_btn = QPushButton("Eliminar")
             delete_btn.setObjectName("deleteBtn")
+            delete_btn.setMinimumHeight(30)
 
             edit_btn.clicked.connect(lambda _, p=p: self.edit_product(p))
-            delete_btn.clicked.connect(lambda _, p=p: self.delete_product_ui(p.id))
+            delete_btn.clicked.connect(
+                lambda _, p=p: self.delete_product_ui(p.id))
 
+            btn_layout.addStretch()
             btn_layout.addWidget(edit_btn)
             btn_layout.addWidget(delete_btn)
+            btn_layout.addStretch()
 
             container = QWidget()
             container.setLayout(btn_layout)
@@ -118,6 +128,7 @@ class ProductView(QWidget):
     def edit_product(self, product):
         self.editing_id = product.id
         self.name_input.setText(product.name)
+        self.name_input.setFocus()
         self.price_input.setText(str(product.price))
         self.save_button.setText("Actualizar producto")
 
