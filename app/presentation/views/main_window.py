@@ -1,32 +1,47 @@
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QStackedWidget
-from app.presentation.components.sidebar import Sidebar
-from app.presentation.views.product_view import ProductView
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QStackedWidget
+)
 
-class MainWindow(QWidget):
+from app.presentation.views.login_view import (
+    LoginView
+)
+
+from app.presentation.views.erp_view import (
+    ERPView
+)
+
+
+class MainWindow(QMainWindow):
+
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("ERP System")
-        self.resize(900, 500)
+        self.setWindowTitle("Python ERP")
 
-        layout = QHBoxLayout()
+        self.resize(1200, 700)
 
-        # Sidebar
-        self.sidebar = Sidebar(self.switch_view)
-
-        # Área de contenido
         self.stack = QStackedWidget()
 
-        # Vistas
-        self.product_view = ProductView()
+        self.setCentralWidget(self.stack)
 
-        self.stack.addWidget(self.product_view)
+        # Login view
+        self.login_view = LoginView(
+            self.login_success
+        )
 
-        layout.addWidget(self.sidebar)
-        layout.addWidget(self.stack)
+        self.stack.addWidget(
+            self.login_view
+        )
 
-        self.setLayout(layout)
+    def login_success(self, user):
 
-    def switch_view(self, view_name):
-        if view_name == "products":
-            self.stack.setCurrentWidget(self.product_view)
+        self.erp_view = ERPView(user)
+
+        self.stack.addWidget(
+            self.erp_view
+        )
+
+        self.stack.setCurrentWidget(
+            self.erp_view
+        )

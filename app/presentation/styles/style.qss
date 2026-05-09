@@ -114,3 +114,30 @@ QTableWidget::item:hover {
 QLineEdit:focus {
     border: 1px solid #3b82f6;
 }
+
+/* ===== LOGIN ===== */
+
+QFrame#loginCard {
+    background-color: #111827;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+}
+
+QLabel#loginTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* Secondary button */
+QPushButton#secondary {
+    background-color: #1f2937;
+    color: white;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+QPushButton#secondary:hover {
+    background-color: #374151;
+}

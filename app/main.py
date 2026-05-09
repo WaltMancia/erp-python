@@ -1,26 +1,23 @@
 import sys
+
 from PySide6.QtWidgets import QApplication
-from app.presentation.views.main_window import MainWindow
-from app.infrastructure.db.connection import engine, Base
 
-def init_db():
-    Base.metadata.create_all(bind=engine)
+from app.presentation.views.main_window import (
+    MainWindow
+)
 
-def load_styles(app):
-    with open("app/presentation/styles/style.qss", "r") as f:
-        app.setStyleSheet(f.read())
+app = QApplication(sys.argv)
 
-def main():
-    init_db()
+# Styles
+with open(
+    "app/presentation/styles/style.qss",
+    "r"
+) as f:
 
-    app = QApplication(sys.argv)
+    app.setStyleSheet(f.read())
 
-    load_styles(app)
+window = MainWindow()
 
-    window = MainWindow()
-    window.show()
+window.show()
 
-    sys.exit(app.exec())
-
-if __name__ == "__main__":
-    main()
+sys.exit(app.exec())
