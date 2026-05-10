@@ -10,7 +10,9 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import Qt
-
+from app.core.permissions import (
+    has_permission
+)
 from app.application.usecases.product_usecases import (
     create_product,
     list_products,
@@ -22,9 +24,9 @@ from app.presentation.dialogs.product_dialog import ProductDialog
 
 
 class ProductView(QWidget):
-    def __init__(self):
+    def __init__(self, user):
         super().__init__()
-
+        self.user = user
         layout = QVBoxLayout()
 
         # Espaciado profesional
@@ -96,7 +98,12 @@ class ProductView(QWidget):
         )
 
         # Layout
-        layout.addWidget(self.add_button)
+        if has_permission(
+            self.user,
+            "products.create"
+        ):
+            layout.addWidget(self.add_button)
+
         layout.addWidget(self.table)
 
         self.setLayout(layout)
@@ -156,8 +163,17 @@ class ProductView(QWidget):
             )
 
             # Layout botones
-            btn_layout.addWidget(edit_btn)
-            btn_layout.addWidget(delete_btn)
+            if has_permission(
+                self.user,
+                "products.edit"
+            ):
+                btn_layout.addWidget(edit_btn)
+
+            if has_permission(
+                self.user,
+                "products.delete"
+            ):
+                btn_layout.addWidget(delete_btn)
 
             container = QWidget()
             container.setLayout(btn_layout)

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QWidget,
-    QHBoxLayout
+    QHBoxLayout,
+    QStackedWidget
 )
 
 from app.presentation.components.sidebar import (
@@ -21,16 +22,36 @@ class ERPView(QWidget):
 
         layout = QHBoxLayout()
 
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        layout.setSpacing(0)
+
+        # Sidebar
         self.sidebar = Sidebar(
+            user,
             self.switch_view
         )
 
-        self.product_view = ProductView()
+        # Stack
+        self.stack = QStackedWidget()
+
+        self.product_view = ProductView(
+            self.user
+        )
+
+        self.stack.addWidget(
+            self.product_view
+        )
 
         layout.addWidget(self.sidebar)
-        layout.addWidget(self.product_view)
+        layout.addWidget(self.stack)
 
         self.setLayout(layout)
 
     def switch_view(self, view_name):
-        pass
+
+        if view_name == "products":
+
+            self.stack.setCurrentWidget(
+                self.product_view
+            )

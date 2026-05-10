@@ -141,3 +141,36 @@ QPushButton#secondary {
 QPushButton#secondary:hover {
     background-color: #374151;
 }
+
+/* ===== SIDEBAR ===== */
+
+QWidget#sidebar {
+    background-color: #0f172a;
+    border-right: 1px solid #1e293b;
+}
+
+QLabel#sidebarLogo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+QPushButton#sidebarButton {
+    background-color: transparent;
+    color: #cbd5e1;
+    border: none;
+    text-align: left;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+QPushButton#sidebarButton:hover {
+    background-color: #1e293b;
+    color: white;
+}
+
+QLabel#sidebarUser {
+    color: #94a3b8;
+    padding: 10px;
+}

@@ -1,29 +1,79 @@
-from app.domain.product import Product
-from app.infrastructure.repositories.product_repository import ProductRepository
+from app.infrastructure.repositories.product_repository import (
+    ProductRepository
+)
+
+from app.core.exceptions import (
+    ValidationError
+)
 
 repo = ProductRepository()
 
-def create_product(name: str, price: float):
-    if not name:
-        raise ValueError("El nombre es obligatorio")
 
-    if price <= 0:
-        raise ValueError("El precio debe ser mayor a 0")
+def create_product(name, price):
 
-    product = Product(name, price)
-    repo.add(product)
+    if not name.strip():
+
+        raise ValidationError(
+            "El nombre es obligatorio"
+        )
+
+    try:
+        price = float(price)
+
+    except ValueError:
+
+        raise ValidationError(
+            "El precio debe ser numérico"
+        )
+
+    if price < 0:
+
+        raise ValidationError(
+            "El precio no puede ser negativo"
+        )
+
+    repo.create(name, price)
+
 
 def list_products():
+
     return repo.get_all()
 
-def delete_product(product_id: int):
+
+def update_product(
+    product_id,
+    name,
+    price
+):
+
+    if not name.strip():
+
+        raise ValidationError(
+            "El nombre es obligatorio"
+        )
+
+    try:
+        price = float(price)
+
+    except ValueError:
+
+        raise ValidationError(
+            "El precio debe ser numérico"
+        )
+
+    if price < 0:
+
+        raise ValidationError(
+            "El precio no puede ser negativo"
+        )
+
+    repo.update(
+        product_id,
+        name,
+        price
+    )
+
+
+def delete_product(product_id):
+
     repo.delete(product_id)
-
-def update_product(product_id: int, name: str, price: float):
-    if not name:
-        raise ValueError("El nombre es obligatorio")
-
-    if price <= 0:
-        raise ValueError("El precio debe ser mayor a 0")
-
-    repo.update(product_id, name, price)

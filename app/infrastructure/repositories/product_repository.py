@@ -5,7 +5,7 @@ from app.infrastructure.db.connection import (
 )
 
 from app.infrastructure.db.models import (
-    UserModel
+    ProductModel
 )
 
 from app.core.logger import logger
@@ -15,68 +15,140 @@ from app.core.exceptions import (
 )
 
 
-class UserRepository:
+class ProductRepository:
 
-    def create(
+    def create(self, name, price):
+
+        session = SessionLocal()
+
+        try:
+
+            product = ProductModel(
+                name=name,
+                price=price
+            )
+
+            session.add(product)
+
+            session.commit()
+
+            logger.info(
+                f"Producto creado: {name}"
+            )
+
+        except SQLAlchemyError:
+
+            session.rollback()
+
+            logger.exception(
+                "Error creando producto"
+            )
+
+            raise DatabaseError(
+                "Error al crear producto"
+            )
+
+        finally:
+            session.close()
+
+    def get_all(self):
+
+        session = SessionLocal()
+
+        try:
+
+            return session.query(
+                ProductModel
+            ).all()
+
+        except SQLAlchemyError:
+
+            logger.exception(
+                "Error obteniendo productos"
+            )
+
+            raise DatabaseError(
+                "Error consultando productos"
+            )
+
+        finally:
+            session.close()
+
+    def update(
         self,
-        username,
-        password,
-        role="employee"
+        product_id,
+        name,
+        price
     ):
 
         session = SessionLocal()
 
         try:
 
-            user = UserModel(
-                username=username,
-                password=password,
-                role=role
+            product = (
+                session.query(ProductModel)
+                .filter_by(id=product_id)
+                .first()
             )
 
-            session.add(user)
+            if product:
 
-            session.commit()
+                product.name = name
+                product.price = price
 
-            logger.info(
-                f"Usuario creado: {username}"
-            )
+                session.commit()
 
-        except SQLAlchemyError as e:
+                logger.info(
+                    f"Producto actualizado: {name}"
+                )
+
+        except SQLAlchemyError:
 
             session.rollback()
 
             logger.exception(
-                "Error creando usuario"
+                "Error actualizando producto"
             )
 
             raise DatabaseError(
-                "Error al guardar usuario"
+                "Error actualizando producto"
             )
 
         finally:
             session.close()
 
-    def get_by_username(self, username):
+    def delete(self, product_id):
 
         session = SessionLocal()
 
         try:
 
-            return (
-                session.query(UserModel)
-                .filter_by(username=username)
+            product = (
+                session.query(ProductModel)
+                .filter_by(id=product_id)
                 .first()
             )
 
+            if product:
+
+                session.delete(product)
+
+                session.commit()
+
+                logger.info(
+                    f"Producto eliminado: {product.name}"
+                )
+
         except SQLAlchemyError:
 
+            session.rollback()
+
             logger.exception(
-                "Error consultando usuario"
+                "Error eliminando producto"
             )
 
             raise DatabaseError(
-                "Error consultando usuario"
+                "Error eliminando producto"
             )
 
         finally:
