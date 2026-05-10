@@ -11,6 +11,11 @@ from app.application.usecases.auth_usecases import (
     register_user
 )
 
+from app.core.exceptions import (
+    ValidationError,
+    DatabaseError
+)
+
 
 class RegisterDialog(QDialog):
 
@@ -88,10 +93,26 @@ class RegisterDialog(QDialog):
 
             self.accept()
 
-        except ValueError as e:
+        except ValidationError as e:
 
             QMessageBox.warning(
                 self,
                 "Validación",
                 str(e)
+            )
+
+        except DatabaseError as e:
+
+            QMessageBox.critical(
+                self,
+                "Base de datos",
+                str(e)
+            )
+
+        except Exception:
+
+            QMessageBox.critical(
+                self,
+                "Error",
+                "Ha ocurrido un error inesperado"
             )

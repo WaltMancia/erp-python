@@ -18,6 +18,11 @@ from app.presentation.dialogs.register_dialog import (
     RegisterDialog
 )
 
+from app.core.exceptions import (
+    AuthenticationError,
+    DatabaseError
+)
+
 
 class LoginView(QWidget):
 
@@ -170,12 +175,28 @@ class LoginView(QWidget):
 
             self.login_success_callback(user)
 
-        except ValueError as e:
+        except AuthenticationError as e:
 
             QMessageBox.warning(
                 self,
                 "Login",
                 str(e)
+            )
+
+        except DatabaseError as e:
+
+            QMessageBox.critical(
+                self,
+                "Base de datos",
+                str(e)
+            )
+
+        except Exception:
+
+            QMessageBox.critical(
+                self,
+                "Error",
+                "Ha ocurrido un error inesperado"
             )
 
     def open_register(self):

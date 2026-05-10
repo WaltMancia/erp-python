@@ -7,6 +7,11 @@ from app.infrastructure.security.password_hasher import (
     verify_password
 )
 
+from app.core.exceptions import (
+    ValidationError,
+    AuthenticationError
+)
+
 repo = UserRepository()
 
 
@@ -17,19 +22,22 @@ def register_user(
 ):
 
     if not username.strip():
-        raise ValueError(
+
+        raise ValidationError(
             "El usuario es obligatorio"
         )
 
     if len(password) < 4:
-        raise ValueError(
+
+        raise ValidationError(
             "La contraseña debe tener al menos 4 caracteres"
         )
 
     existing = repo.get_by_username(username)
 
     if existing:
-        raise ValueError(
+
+        raise ValidationError(
             "El usuario ya existe"
         )
 
@@ -50,7 +58,8 @@ def login_user(
     user = repo.get_by_username(username)
 
     if not user:
-        raise ValueError(
+
+        raise AuthenticationError(
             "Usuario o contraseña incorrectos"
         )
 
@@ -60,7 +69,8 @@ def login_user(
     )
 
     if not valid:
-        raise ValueError(
+
+        raise AuthenticationError(
             "Usuario o contraseña incorrectos"
         )
 

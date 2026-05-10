@@ -1,44 +1,83 @@
-from app.infrastructure.db.connection import SessionLocal
-from app.infrastructure.db.models import ProductModel
+from sqlalchemy.exc import SQLAlchemyError
 
-class ProductRepository:
+from app.infrastructure.db.connection import (
+    SessionLocal
+)
 
-    def add(self, product):
+from app.infrastructure.db.models import (
+    UserModel
+)
+
+from app.core.logger import logger
+
+from app.core.exceptions import (
+    DatabaseError
+)
+
+
+class UserRepository:
+
+    def create(
+        self,
+        username,
+        password,
+        role="employee"
+    ):
+
         session = SessionLocal()
+
         try:
-            db_product = ProductModel(
-                name=product.name,
-                price=product.price
+
+            user = UserModel(
+                username=username,
+                password=password,
+                role=role
             )
-            session.add(db_product)
+
+            session.add(user)
+
             session.commit()
+
+            logger.info(
+                f"Usuario creado: {username}"
+            )
+
+        except SQLAlchemyError as e:
+
+            session.rollback()
+
+            logger.exception(
+                "Error creando usuario"
+            )
+
+            raise DatabaseError(
+                "Error al guardar usuario"
+            )
+
         finally:
             session.close()
 
-    def get_all(self):
-        session = SessionLocal()
-        try:
-            return session.query(ProductModel).all()
-        finally:
-            session.close()
+    def get_by_username(self, username):
 
-    def delete(self, product_id):
         session = SessionLocal()
-        try:
-            product = session.query(ProductModel).get(product_id)
-            if product:
-                session.delete(product)
-                session.commit()
-        finally:
-            session.close()
 
-    def update(self, product_id, name, price):
-        session = SessionLocal()
         try:
-            product = session.query(ProductModel).get(product_id)
-            if product:
-                product.name = name
-                product.price = price
-                session.commit()
+
+            return (
+                session.query(UserModel)
+                .filter_by(username=username)
+                .first()
+            )
+
+        except SQLAlchemyError:
+
+            logger.exception(
+                "Error consultando usuario"
+            )
+
+            raise DatabaseError(
+                "Error consultando usuario"
+            )
+
         finally:
             session.close()
