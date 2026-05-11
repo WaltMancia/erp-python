@@ -161,13 +161,20 @@ QPushButton#sidebarButton {
     border: none;
     text-align: left;
     padding: 14px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 14px;
+    font-weight: 500;
 }
 
 QPushButton#sidebarButton:hover {
     background-color: #1e293b;
     color: white;
+}
+
+QPushButton#sidebarButton[active="true"] {
+    background-color: #2563eb;
+    color: white;
+    font-weight: bold;
 }
 
 QLabel#sidebarUser {

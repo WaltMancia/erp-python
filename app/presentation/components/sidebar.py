@@ -25,6 +25,8 @@ class Sidebar(QWidget):
 
         self.on_navigate = on_navigate
 
+        self.buttons = {}
+
         self.setFixedWidth(240)
 
         self.setObjectName("sidebar")
@@ -40,100 +42,56 @@ class Sidebar(QWidget):
             20
         )
 
-        # Logo
+        # ===== LOGO =====
+
         logo = QLabel("Python ERP")
 
-        logo.setObjectName("sidebarLogo")
+        logo.setObjectName(
+            "sidebarLogo"
+        )
 
-        logo.setAlignment(Qt.AlignCenter)
+        logo.setAlignment(
+            Qt.AlignCenter
+        )
 
         layout.addWidget(logo)
 
         layout.addSpacing(20)
 
-        # ===== PRODUCTS =====
+        # ===== MODULES =====
 
-        if has_permission(
-            user,
+        self.add_nav_button(
+            layout,
+            "products",
+            "Productos",
             "products.view"
-        ):
+        )
 
-            btn_products = QPushButton(
-                "Productos"
-            )
-
-            btn_products.setObjectName(
-                "sidebarButton"
-            )
-
-            btn_products.clicked.connect(
-                lambda: self.on_navigate(
-                    "products"
-                )
-            )
-
-            layout.addWidget(btn_products)
-
-        # ===== INVENTORY =====
-
-        if has_permission(
-            user,
+        self.add_nav_button(
+            layout,
+            "inventory",
+            "Inventario",
             "inventory.view"
-        ):
+        )
 
-            btn_inventory = QPushButton(
-                "Inventario"
-            )
-
-            btn_inventory.setObjectName(
-                "sidebarButton"
-            )
-
-            layout.addWidget(btn_inventory)
-
-            btn_inventory.clicked.connect(
-                lambda: self.on_navigate(
-                    "inventory"
-                )
-            )
-
-        # ===== SALES =====
-
-        if has_permission(
-            user,
+        self.add_nav_button(
+            layout,
+            "sales",
+            "Ventas",
             "sales.view"
-        ):
+        )
 
-            btn_sales = QPushButton(
-                "Ventas"
-            )
-
-            btn_sales.setObjectName(
-                "sidebarButton"
-            )
-
-            layout.addWidget(btn_sales)
-
-        # ===== REPORTS =====
-
-        if has_permission(
-            user,
+        self.add_nav_button(
+            layout,
+            "reports",
+            "Reportes",
             "reports.view"
-        ):
-
-            btn_reports = QPushButton(
-                "Reportes"
-            )
-
-            btn_reports.setObjectName(
-                "sidebarButton"
-            )
-
-            layout.addWidget(btn_reports)
+        )
 
         layout.addStretch()
 
-        # User info
+        # ===== USER =====
+
         user_label = QLabel(
             f"{user.username}\n({user.role})"
         )
@@ -142,8 +100,69 @@ class Sidebar(QWidget):
             "sidebarUser"
         )
 
-        user_label.setAlignment(Qt.AlignCenter)
+        user_label.setAlignment(
+            Qt.AlignCenter
+        )
 
         layout.addWidget(user_label)
 
         self.setLayout(layout)
+
+    def add_nav_button(
+        self,
+        layout,
+        route,
+        text,
+        permission
+    ):
+
+        if not has_permission(
+            self.user,
+            permission
+        ):
+            return
+
+        button = QPushButton(text)
+
+        button.setObjectName(
+            "sidebarButton"
+        )
+
+        button.setCursor(
+            Qt.PointingHandCursor
+        )
+
+        button.clicked.connect(
+            lambda: self.navigate(route)
+        )
+
+        self.buttons[route] = button
+
+        layout.addWidget(button)
+
+    def navigate(self, route):
+
+        self.set_active(route)
+
+        self.on_navigate(route)
+
+    def set_active(self, active_route):
+
+        for route, button in self.buttons.items():
+
+            if route == active_route:
+
+                button.setProperty(
+                    "active",
+                    True
+                )
+
+            else:
+
+                button.setProperty(
+                    "active",
+                    False
+                )
+
+            button.style().unpolish(button)
+            button.style().polish(button)

@@ -8,12 +8,12 @@ from app.presentation.components.sidebar import (
     Sidebar
 )
 
-from app.presentation.views.inventory_view import (
-    InventoryView
-)
-
 from app.presentation.views.product_view import (
     ProductView
+)
+
+from app.presentation.views.inventory_view import (
+    InventoryView
 )
 
 
@@ -26,48 +26,64 @@ class ERPView(QWidget):
 
         layout = QHBoxLayout()
 
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(
+            0,
+            0,
+            0,
+            0
+        )
 
         layout.setSpacing(0)
 
-        # Sidebar
+        # ===== SIDEBAR =====
+
         self.sidebar = Sidebar(
             user,
             self.switch_view
         )
 
-        # Stack
+        # ===== STACK =====
+
         self.stack = QStackedWidget()
 
-        self.product_view = ProductView(
-            self.user
-        )
+        # ===== VIEWS =====
 
-        self.inventory_view = InventoryView()
+        self.views = {
 
-        self.stack.addWidget(
-            self.inventory_view
-        )
+            "products": ProductView(
+                self.user
+            ),
 
-        self.stack.addWidget(
-            self.product_view
-        )
+            "inventory": InventoryView()
+        }
+
+        # ===== ADD TO STACK =====
+
+        for view in self.views.values():
+
+            self.stack.addWidget(view)
 
         layout.addWidget(self.sidebar)
         layout.addWidget(self.stack)
 
         self.setLayout(layout)
 
-    def switch_view(self, view_name):
+        # ===== DEFAULT ROUTE =====
 
-        if view_name == "products":
+        self.switch_view(
+            "products"
+        )
+
+    def switch_view(self, route):
+
+        view = self.views.get(route)
+
+        if view:
 
             self.stack.setCurrentWidget(
-                self.product_view
+                view
             )
 
-        if view_name == "inventory":
-
-            self.stack.setCurrentWidget(
-                self.inventory_view
+            self.sidebar.set_active(
+                route
             )

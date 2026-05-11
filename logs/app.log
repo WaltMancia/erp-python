@@ -297,3 +297,4 @@ sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1054, "Unknown 
 [SQL: SELECT products.id AS products_id, products.name AS products_name, products.price AS products_price, products.stock AS products_stock 
 FROM products]
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-05-11 15:35:04,783 | INFO | ERP | Producto creado: Prueba
