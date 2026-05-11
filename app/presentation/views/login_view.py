@@ -14,9 +14,6 @@ from app.application.usecases.auth_usecases import (
     login_user
 )
 
-from app.presentation.dialogs.register_dialog import (
-    RegisterDialog
-)
 
 from app.core.exceptions import (
     AuthenticationError,
@@ -100,21 +97,6 @@ class LoginView(QWidget):
             self.login
         )
 
-        # Register button
-        self.register_button = QPushButton(
-            "Crear cuenta"
-        )
-
-        self.register_button.setObjectName(
-            "secondary"
-        )
-
-        self.register_button.setMinimumHeight(40)
-
-        self.register_button.clicked.connect(
-            self.open_register
-        )
-
         # Layout
         card_layout.addWidget(title)
 
@@ -138,10 +120,6 @@ class LoginView(QWidget):
 
         card_layout.addWidget(
             self.login_button
-        )
-
-        card_layout.addWidget(
-            self.register_button
         )
 
         card.setLayout(card_layout)
@@ -198,9 +176,3 @@ class LoginView(QWidget):
                 "Error",
                 "Ha ocurrido un error inesperado"
             )
-
-    def open_register(self):
-
-        dialog = RegisterDialog()
-
-        dialog.exec()

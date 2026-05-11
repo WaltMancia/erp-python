@@ -21,6 +21,18 @@ def register_user(
     role="employee"
 ):
 
+    allowed_roles = [
+        "admin",
+        "employee",
+        "inventory"
+    ]
+
+    if role not in allowed_roles:
+
+        raise ValidationError(
+            "Rol inválido"
+        )
+
     if not username.strip():
 
         raise ValidationError(
