@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float
 from .connection import Base
 from datetime import datetime
 from sqlalchemy import DateTime
+from app.infrastructure.db.connection import Base
 
 
 class ProductModel(Base):
