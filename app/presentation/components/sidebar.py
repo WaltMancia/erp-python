@@ -91,6 +91,12 @@ class Sidebar(QWidget):
 
             layout.addWidget(btn_inventory)
 
+            btn_inventory.clicked.connect(
+                lambda: self.on_navigate(
+                    "inventory"
+                )
+            )
+
         # ===== SALES =====
 
         if has_permission(

@@ -8,6 +8,10 @@ from app.presentation.components.sidebar import (
     Sidebar
 )
 
+from app.presentation.views.inventory_view import (
+    InventoryView
+)
+
 from app.presentation.views.product_view import (
     ProductView
 )
@@ -39,6 +43,12 @@ class ERPView(QWidget):
             self.user
         )
 
+        self.inventory_view = InventoryView()
+
+        self.stack.addWidget(
+            self.inventory_view
+        )
+
         self.stack.addWidget(
             self.product_view
         )
@@ -54,4 +64,10 @@ class ERPView(QWidget):
 
             self.stack.setCurrentWidget(
                 self.product_view
+            )
+
+        if view_name == "inventory":
+
+            self.stack.setCurrentWidget(
+                self.inventory_view
             )
