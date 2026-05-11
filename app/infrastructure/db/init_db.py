@@ -6,7 +6,8 @@ from app.infrastructure.db.connection import engine
 from app.infrastructure.db.models import (
     Base,
     ProductModel,
-    UserModel
+    UserModel,
+    InventoryMovementModel
 )
 
 # Crear tablas

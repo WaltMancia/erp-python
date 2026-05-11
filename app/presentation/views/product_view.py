@@ -45,11 +45,12 @@ class ProductView(QWidget):
         # Tabla
         self.table = QTableWidget()
 
-        self.table.setColumnCount(3)
+        self.table.setColumnCount(4)
 
         self.table.setHorizontalHeaderLabels([
             "Nombre",
             "Precio",
+            "Stock",
             "Acciones"
         ])
 
@@ -67,7 +68,7 @@ class ProductView(QWidget):
         )
 
         header.setSectionResizeMode(
-            2,
+            3,
             QHeaderView.ResizeToContents
         )
 
@@ -131,6 +132,13 @@ class ProductView(QWidget):
                 QTableWidgetItem(f"Q{p.price:.2f}")
             )
 
+            # Stock
+            self.table.setItem(
+                row,
+                2,
+                QTableWidgetItem(str(p.stock))
+            )
+
             # ===== BOTONES =====
 
             btn_layout = QHBoxLayout()
@@ -180,7 +188,7 @@ class ProductView(QWidget):
 
             self.table.setCellWidget(
                 row,
-                2,
+                3,
                 container
             )
 
