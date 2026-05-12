@@ -3,6 +3,12 @@ from .connection import Base
 from datetime import datetime
 from sqlalchemy import DateTime
 from app.infrastructure.db.connection import Base
+from sqlalchemy import (
+    ForeignKey,
+    DateTime
+)
+
+from datetime import datetime
 
 
 class ProductModel(Base):
@@ -63,4 +69,64 @@ class InventoryMovementModel(Base):
     created_at = Column(
         DateTime,
         default=datetime.utcnow
+    )
+
+
+class SaleModel(Base):
+
+    __tablename__ = "sales"
+
+    id = Column(
+        Integer,
+        primary_key=True
+    )
+
+    user_id = Column(
+        Integer,
+        nullable=False
+    )
+
+    total = Column(
+        Float,
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+
+class SaleItemModel(Base):
+
+    __tablename__ = "sale_items"
+
+    id = Column(
+        Integer,
+        primary_key=True
+    )
+
+    sale_id = Column(
+        Integer,
+        ForeignKey("sales.id")
+    )
+
+    product_id = Column(
+        Integer,
+        ForeignKey("products.id")
+    )
+
+    quantity = Column(
+        Integer,
+        nullable=False
+    )
+
+    price = Column(
+        Float,
+        nullable=False
+    )
+
+    subtotal = Column(
+        Float,
+        nullable=False
     )

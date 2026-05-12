@@ -16,6 +16,10 @@ from app.presentation.views.inventory_view import (
     InventoryView
 )
 
+from app.presentation.views.sales_view import (
+    SalesView
+)
+
 
 class ERPView(QWidget):
 
@@ -54,7 +58,8 @@ class ERPView(QWidget):
                 self.user
             ),
 
-            "inventory": InventoryView()
+            "inventory": InventoryView(),
+            "sales": SalesView(),
         }
 
         # ===== ADD TO STACK =====

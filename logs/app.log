@@ -298,3 +298,4 @@ sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1054, "Unknown 
 FROM products]
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
 2026-05-11 15:35:04,783 | INFO | ERP | Producto creado: Prueba
+2026-05-12 13:01:56,701 | INFO | ERP | Entrada inventario: Prueba +10
