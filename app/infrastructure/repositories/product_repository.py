@@ -17,7 +17,7 @@ from app.core.exceptions import (
 
 class ProductRepository:
 
-    def create(self, name, price):
+    def create(self, name, price, stock):
 
         session = SessionLocal()
 
@@ -25,7 +25,8 @@ class ProductRepository:
 
             product = ProductModel(
                 name=name,
-                price=price
+                price=price,
+                stock=stock
             )
 
             session.add(product)
@@ -78,7 +79,8 @@ class ProductRepository:
         self,
         product_id,
         name,
-        price
+        price,
+        stock
     ):
 
         session = SessionLocal()
@@ -95,7 +97,7 @@ class ProductRepository:
 
                 product.name = name
                 product.price = price
-
+                product.stock = stock
                 session.commit()
 
                 logger.info(

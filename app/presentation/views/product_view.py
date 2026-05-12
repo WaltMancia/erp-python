@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import (
+    QLabel,
     QWidget,
     QVBoxLayout,
     QPushButton,
@@ -45,12 +46,13 @@ class ProductView(QWidget):
         # Tabla
         self.table = QTableWidget()
 
-        self.table.setColumnCount(4)
+        self.table.setColumnCount(5)
 
         self.table.setHorizontalHeaderLabels([
             "Nombre",
             "Precio",
             "Stock",
+            "Estado",
             "Acciones"
         ])
 
@@ -139,6 +141,38 @@ class ProductView(QWidget):
                 QTableWidgetItem(str(p.stock))
             )
 
+            status = QLabel()
+
+            if p.stock <= 5:
+
+                status.setText("Stock Bajo")
+
+                status.setStyleSheet("""
+                    background:#7f1d1d;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:8px;
+                """)
+
+            else:
+
+                status.setText("Disponible")
+
+                status.setStyleSheet("""
+                    background:#14532d;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:8px;
+                """)
+
+            status.setAlignment(Qt.AlignCenter)
+
+            self.table.setCellWidget(
+                row,
+                3,
+                status
+            )
+
             # ===== BOTONES =====
 
             btn_layout = QHBoxLayout()
@@ -188,7 +222,7 @@ class ProductView(QWidget):
 
             self.table.setCellWidget(
                 row,
-                3,
+                4,
                 container
             )
 
@@ -201,7 +235,8 @@ class ProductView(QWidget):
 
             create_product(
                 data["name"],
-                data["price"]
+                data["price"],
+                data["stock"]
             )
 
             self.load_products()
@@ -216,7 +251,8 @@ class ProductView(QWidget):
             update_product(
                 product.id,
                 data["name"],
-                data["price"]
+                data["price"],
+                data["stock"]
             )
 
             self.load_products()

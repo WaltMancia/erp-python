@@ -9,7 +9,7 @@ from app.core.exceptions import (
 repo = ProductRepository()
 
 
-def create_product(name, price):
+def create_product(name, price, stock):
 
     if not name.strip():
 
@@ -32,7 +32,7 @@ def create_product(name, price):
             "El precio no puede ser negativo"
         )
 
-    repo.create(name, price)
+    repo.create(name, price, stock)
 
 
 def list_products():
@@ -43,7 +43,8 @@ def list_products():
 def update_product(
     product_id,
     name,
-    price
+    price,
+    stock
 ):
 
     if not name.strip():
@@ -70,7 +71,8 @@ def update_product(
     repo.update(
         product_id,
         name,
-        price
+        price,
+        stock
     )
 
 
