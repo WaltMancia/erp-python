@@ -10,6 +10,16 @@ from PySide6.QtWidgets import (
     QHBoxLayout
 )
 
+from PySide6.QtWidgets import QFileDialog
+
+from app.services.pdf_service import (
+    PDFService
+)
+
+from app.services.excel_service import (
+    ExcelService
+)
+
 from PySide6.QtCore import Qt
 from app.core.permissions import (
     has_permission
@@ -41,6 +51,22 @@ class ProductView(QWidget):
 
         self.add_button.clicked.connect(
             self.open_create_dialog
+        )
+
+        self.pdf_button = QPushButton(
+            "Exportar PDF"
+        )
+
+        self.excel_button = QPushButton(
+            "Exportar Excel"
+        )
+
+        self.pdf_button.clicked.connect(
+            self.export_pdf
+        )
+
+        self.excel_button.clicked.connect(
+            self.export_excel
         )
 
         # Tabla
@@ -105,7 +131,15 @@ class ProductView(QWidget):
             self.user,
             "products.create"
         ):
-            layout.addWidget(self.add_button)
+            toolbar = QHBoxLayout()
+
+            toolbar.addWidget(self.add_button)
+            toolbar.addWidget(self.pdf_button)
+            toolbar.addWidget(self.excel_button)
+
+            toolbar.addStretch()
+
+            layout.addLayout(toolbar)
 
         layout.addWidget(self.table)
 
@@ -271,3 +305,51 @@ class ProductView(QWidget):
             delete_product(product_id)
 
             self.load_products()
+
+    def export_pdf(self):
+
+        products = list_products()
+
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Guardar PDF",
+            "productos.pdf",
+            "PDF Files (*.pdf)"
+        )
+
+        if filename:
+
+            PDFService.export_products(
+                products,
+                filename
+            )
+
+            QMessageBox.information(
+                self,
+                "Éxito",
+                "PDF exportado correctamente"
+            )
+
+    def export_excel(self):
+
+        products = list_products()
+
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Guardar Excel",
+            "productos.xlsx",
+            "Excel Files (*.xlsx)"
+        )
+
+        if filename:
+
+            ExcelService.export_products(
+                products,
+                filename
+            )
+
+            QMessageBox.information(
+                self,
+                "Éxito",
+                "Excel exportado correctamente"
+            )
