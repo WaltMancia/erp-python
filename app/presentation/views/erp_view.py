@@ -20,6 +20,10 @@ from app.presentation.views.sales_view import (
     SalesView
 )
 
+from app.presentation.views.dashboard_view import (
+    DashboardView
+)
+
 
 class ERPView(QWidget):
 
@@ -54,6 +58,7 @@ class ERPView(QWidget):
 
         self.views = {
 
+            "dashboard": DashboardView(),
             "products": ProductView(
                 self.user
             ),
@@ -76,7 +81,7 @@ class ERPView(QWidget):
         # ===== DEFAULT ROUTE =====
 
         self.switch_view(
-            "products"
+            "dashboard"
         )
 
     def switch_view(self, route):

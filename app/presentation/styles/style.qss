@@ -199,3 +199,37 @@ QLabel#stockOk {
     border-radius: 8px;
     font-weight: bold;
 }
+
+QFrame#dashboardCard {
+    background-color: #1e293b;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #334155;
+}
+
+QLabel#dashboardCardTitle {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+QLabel#dashboardCardValue {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+QLabel#sectionTitle {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+QListWidget {
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 10px;
+    color: white;
+}

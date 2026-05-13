@@ -62,6 +62,13 @@ class Sidebar(QWidget):
 
         self.add_nav_button(
             layout,
+            "dashboard",
+            "Dashboard",
+            "products.view"
+        )
+
+        self.add_nav_button(
+            layout,
             "products",
             "Productos",
             "products.view"
