@@ -8,8 +8,25 @@ from PySide6.QtWidgets import (
     QListWidgetItem
 )
 
+from PySide6.QtCharts import (
+    QChart,
+    QChartView,
+    QBarSeries,
+    QBarSet,
+    QBarCategoryAxis
+)
+
+from PySide6.QtGui import (
+    QPainter
+)
+
 from app.application.usecases.dashboard_usecases import (
     get_dashboard_metrics
+)
+
+from app.application.usecases.analytics_usecases import (
+    sales_by_day,
+    low_stock_products
 )
 
 
@@ -113,36 +130,109 @@ class DashboardView(QWidget):
 
         main_layout.addLayout(grid)
 
-        # ===== RECENT ACTIVITY =====
+        # ===== SALES CHART =====
 
-        activity_title = QLabel(
-            "Actividad reciente"
+        chart_title = QLabel(
+            "Ventas por día"
         )
 
-        activity_title.setObjectName(
+        chart_title.setObjectName(
             "sectionTitle"
         )
 
         main_layout.addWidget(
-            activity_title
+            chart_title
         )
 
-        activity_list = QListWidget()
+        sales_data = sales_by_day()
 
-        for movement in metrics[
-            "recent_movements"
-        ]:
+        categories = []
 
-            item = QListWidgetItem(
-                f"{movement.type} | "
-                f"Producto ID {movement.product_id} | "
-                f"Cantidad: {movement.quantity}"
+        bar_set = QBarSet(
+            "Ventas"
+        )
+
+        for date, total in sales_data:
+
+            categories.append(
+                str(date)
             )
 
-            activity_list.addItem(item)
+            bar_set.append(
+                float(total)
+            )
+
+        series = QBarSeries()
+
+        series.append(bar_set)
+
+        chart = QChart()
+
+        chart.addSeries(series)
+
+        chart.setTitle(
+            "Ingresos diarios"
+        )
+
+        chart.setAnimationOptions(
+            QChart.SeriesAnimations
+        )
+
+        axis = QBarCategoryAxis()
+
+        axis.append(categories)
+
+        chart.createDefaultAxes()
+
+        chart.setAxisX(
+            axis,
+            series
+        )
+
+        chart.legend().setVisible(
+            True
+        )
+
+        chart_view = QChartView(chart)
+
+        chart_view.setRenderHint(
+            QPainter.Antialiasing
+        )
+
+        chart_view.setMinimumHeight(
+            350
+        )
 
         main_layout.addWidget(
-            activity_list
+            chart_view
+        )
+
+        # ===== LOW STOCK =====
+
+        low_stock_title = QLabel(
+            "Productos con stock bajo"
+        )
+
+        low_stock_title.setObjectName(
+            "sectionTitle"
+        )
+
+        main_layout.addWidget(
+            low_stock_title
+        )
+
+        low_stock_list = QListWidget()
+
+        for product in low_stock_products():
+
+            item = QListWidgetItem(
+                f"{product.name} | Stock: {product.stock}"
+            )
+
+            low_stock_list.addItem(item)
+
+        main_layout.addWidget(
+            low_stock_list
         )
 
         self.setLayout(main_layout)

@@ -233,3 +233,10 @@ QListWidget {
     padding: 10px;
     color: white;
 }
+
+QChartView {
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 12px;
+}
