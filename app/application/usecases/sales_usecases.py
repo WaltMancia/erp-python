@@ -8,7 +8,9 @@ from app.infrastructure.db.models import (
     ProductModel,
     InventoryMovementModel
 )
-
+from app.services.ticket_service import (
+    TicketService
+)
 
 session = SessionLocal()
 
@@ -74,6 +76,20 @@ def create_sale(items):
     sale.total = total
 
     session.commit()
+
+    items_db = (
+        session.query(SaleItemModel)
+        .filter(
+            SaleItemModel.sale_id == sale.id
+        )
+        .all()
+    )
+
+    TicketService.generate_ticket(
+        sale,
+        items_db,
+        f"ticket_sale_{sale.id}.pdf"
+    )
 
     return sale
 
