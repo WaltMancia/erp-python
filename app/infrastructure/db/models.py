@@ -20,6 +20,39 @@ class ProductModel(Base):
     stock = Column(Integer, default=0)
 
 
+class CustomerModel(Base):
+
+    __tablename__ = "customers"
+
+    id = Column(
+        Integer,
+        primary_key=True
+    )
+
+    name = Column(
+        String(100),
+        nullable=False
+    )
+
+    nit = Column(
+        String(30),
+        nullable=False,
+        unique=True
+    )
+
+    phone = Column(
+        String(20)
+    )
+
+    email = Column(
+        String(100)
+    )
+
+    address = Column(
+        String(255)
+    )
+
+
 class UserModel(Base):
     __tablename__ = "users"
 
@@ -89,6 +122,12 @@ class SaleModel(Base):
     total = Column(
         Float,
         nullable=False
+    )
+
+    customer_id = Column(
+        Integer,
+        ForeignKey("customers.id"),
+        nullable=True
     )
 
     created_at = Column(

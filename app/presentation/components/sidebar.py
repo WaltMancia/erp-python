@@ -83,6 +83,13 @@ class Sidebar(QWidget):
 
         self.add_nav_button(
             layout,
+            "customers",
+            "Clientes",
+            "customers.view"
+        )
+
+        self.add_nav_button(
+            layout,
             "sales",
             "Ventas",
             "sales.view"

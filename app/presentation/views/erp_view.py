@@ -24,6 +24,10 @@ from app.presentation.views.dashboard_view import (
     DashboardView
 )
 
+from app.presentation.views.customer_view import (
+    CustomerView
+)
+
 
 class ERPView(QWidget):
 
@@ -64,6 +68,7 @@ class ERPView(QWidget):
             ),
 
             "inventory": InventoryView(),
+            "customers": CustomerView(),
             "sales": SalesView(),
         }
 
