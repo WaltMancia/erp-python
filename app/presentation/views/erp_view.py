@@ -28,6 +28,10 @@ from app.presentation.views.customer_view import (
     CustomerView
 )
 
+from app.presentation.views.sales_history_view import (
+    SalesHistoryView
+)
+
 
 class ERPView(QWidget):
 
@@ -70,6 +74,7 @@ class ERPView(QWidget):
             "inventory": InventoryView(),
             "customers": CustomerView(),
             "sales": SalesView(),
+            "sales_history": SalesHistoryView(),
         }
 
         # ===== ADD TO STACK =====

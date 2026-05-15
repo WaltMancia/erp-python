@@ -83,3 +83,30 @@ class SalesRepository:
         self.session.commit()
 
         return sale
+
+    def get_all_sales(self):
+
+        return (
+            self.session.query(
+                SaleModel
+            )
+            .order_by(
+                SaleModel.id.desc()
+            )
+            .all()
+        )
+
+    def get_sale_items(
+        self,
+        sale_id
+    ):
+
+        return (
+            self.session.query(
+                SaleItemModel
+            )
+            .filter(
+                SaleItemModel.sale_id == sale_id
+            )
+            .all()
+        )

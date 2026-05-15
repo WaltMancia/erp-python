@@ -12,6 +12,10 @@ from app.services.ticket_service import (
     TicketService
 )
 
+from app.infrastructure.repositories.sales_repository import (
+    SalesRepository
+)
+
 session = SessionLocal()
 
 
@@ -100,4 +104,19 @@ def get_products():
     return (
         session.query(ProductModel)
         .all()
+    )
+
+
+sale_repo = SalesRepository()
+
+
+def get_sales_history():
+
+    return sale_repo.get_all_sales()
+
+
+def get_sale_detail(sale_id):
+
+    return sale_repo.get_sale_items(
+        sale_id
     )

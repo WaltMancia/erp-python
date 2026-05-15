@@ -97,6 +97,13 @@ class Sidebar(QWidget):
 
         self.add_nav_button(
             layout,
+            "sales_history",
+            "Historial Ventas",
+            "sales.view"
+        )
+
+        self.add_nav_button(
+            layout,
             "reports",
             "Reportes",
             "reports.view"
