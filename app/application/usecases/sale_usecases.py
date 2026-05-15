@@ -15,12 +15,13 @@ from app.services.ticket_service import (
 session = SessionLocal()
 
 
-def create_sale(items):
+def create_sale(items, customer_id=None):
 
     total = 0
 
     sale = SaleModel(
-        total=0
+        total=0,
+        customer_id=customer_id
     )
 
     session.add(sale)

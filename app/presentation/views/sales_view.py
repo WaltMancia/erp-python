@@ -6,14 +6,21 @@ from PySide6.QtWidgets import (
     QComboBox,
     QSpinBox,
     QHBoxLayout,
-    QListWidget,
-    QListWidgetItem,
-    QMessageBox
+    QMessageBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView
 )
+
+from PySide6.QtCore import Qt
 
 from app.application.usecases.sale_usecases import (
     create_sale,
     get_products
+)
+
+from app.application.usecases.customer_usecases import (
+    list_customers
 )
 
 
@@ -26,6 +33,8 @@ class SalesView(QWidget):
 
         layout = QVBoxLayout()
 
+        # ===== TITLE =====
+
         title = QLabel(
             "Punto de Venta"
         )
@@ -35,6 +44,42 @@ class SalesView(QWidget):
         )
 
         layout.addWidget(title)
+
+        # ===== CUSTOMER =====
+
+        customer_row = QHBoxLayout()
+
+        customer_label = QLabel(
+            "Cliente:"
+        )
+
+        self.customer_combo = QComboBox()
+
+        self.customers = list_customers()
+
+        self.customer_combo.addItem(
+            "Consumidor Final",
+            None
+        )
+
+        for customer in self.customers:
+
+            self.customer_combo.addItem(
+                f"{customer.name} | {customer.nit}",
+                customer.id
+            )
+
+        customer_row.addWidget(
+            customer_label
+        )
+
+        customer_row.addWidget(
+            self.customer_combo
+        )
+
+        layout.addLayout(
+            customer_row
+        )
 
         # ===== PRODUCT SELECT =====
 
@@ -48,6 +93,7 @@ class SalesView(QWidget):
 
             self.product_combo.addItem(
                 f"{product.name} | "
+                f"Q{product.price:.2f} | "
                 f"Stock: {product.stock}",
                 product.id
             )
@@ -56,8 +102,14 @@ class SalesView(QWidget):
 
         self.quantity_input.setMinimum(1)
 
+        self.quantity_input.setMaximum(999)
+
         add_btn = QPushButton(
             "Agregar"
+        )
+
+        add_btn.setObjectName(
+            "primary"
         )
 
         add_btn.clicked.connect(
@@ -78,12 +130,39 @@ class SalesView(QWidget):
 
         layout.addLayout(row)
 
-        # ===== CART =====
+        # ===== CART TABLE =====
 
-        self.cart_list = QListWidget()
+        self.cart_table = QTableWidget()
+
+        self.cart_table.setColumnCount(5)
+
+        self.cart_table.setHorizontalHeaderLabels([
+            "Producto",
+            "Cantidad",
+            "Precio",
+            "Subtotal",
+            "Acciones"
+        ])
+
+        header = (
+            self.cart_table.horizontalHeader()
+        )
+
+        header.setSectionResizeMode(
+            0,
+            QHeaderView.Stretch
+        )
+
+        self.cart_table.verticalHeader().setVisible(
+            False
+        )
+
+        self.cart_table.setMinimumHeight(
+            300
+        )
 
         layout.addWidget(
-            self.cart_list
+            self.cart_table
         )
 
         # ===== TOTAL =====
@@ -93,7 +172,7 @@ class SalesView(QWidget):
         )
 
         self.total_label.setObjectName(
-            "sectionTitle"
+            "dashboardCardValue"
         )
 
         layout.addWidget(
@@ -109,6 +188,8 @@ class SalesView(QWidget):
         sale_btn.setObjectName(
             "primary"
         )
+
+        sale_btn.setMinimumHeight(45)
 
         sale_btn.clicked.connect(
             self.complete_sale
@@ -132,45 +213,116 @@ class SalesView(QWidget):
             self.quantity_input.value()
         )
 
-        subtotal = (
-            product.price * quantity
-        )
+        if quantity > product.stock:
 
-        self.cart.append({
-            "product_id": product.id,
-            "quantity": quantity
-        })
-
-        self.cart_list.addItem(
-            QListWidgetItem(
-                f"{product.name} | "
-                f"{quantity} x "
-                f"Q{product.price:.2f} "
-                f"= Q{subtotal:.2f}"
+            QMessageBox.warning(
+                self,
+                "Stock insuficiente",
+                "No hay suficiente stock"
             )
+
+            return
+
+        existing = next(
+            (
+                item for item in self.cart
+                if item["product_id"] == product.id
+            ),
+            None
         )
 
-        self.update_total()
+        if existing:
 
-    def update_total(self):
+            existing["quantity"] += quantity
+
+        else:
+
+            self.cart.append({
+                "product_id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "quantity": quantity
+            })
+
+        self.refresh_cart()
+
+    def refresh_cart(self):
+
+        self.cart_table.setRowCount(
+            len(self.cart)
+        )
 
         total = 0
 
-        for item in self.cart:
+        for row, item in enumerate(self.cart):
 
-            product = next(
-                p for p in self.products
-                if p.id == item["product_id"]
+            subtotal = (
+                item["price"] *
+                item["quantity"]
             )
 
-            total += (
-                product.price *
-                item["quantity"]
+            total += subtotal
+
+            self.cart_table.setItem(
+                row,
+                0,
+                QTableWidgetItem(
+                    item["name"]
+                )
+            )
+
+            self.cart_table.setItem(
+                row,
+                1,
+                QTableWidgetItem(
+                    str(item["quantity"])
+                )
+            )
+
+            self.cart_table.setItem(
+                row,
+                2,
+                QTableWidgetItem(
+                    f"Q{item['price']:.2f}"
+                )
+            )
+
+            self.cart_table.setItem(
+                row,
+                3,
+                QTableWidgetItem(
+                    f"Q{subtotal:.2f}"
+                )
+            )
+
+            delete_btn = QPushButton(
+                "Eliminar"
+            )
+
+            delete_btn.setObjectName(
+                "deleteBtn"
+            )
+
+            delete_btn.clicked.connect(
+                lambda _, r=row:
+                self.remove_item(r)
+            )
+
+            self.cart_table.setCellWidget(
+                row,
+                4,
+                delete_btn
             )
 
         self.total_label.setText(
             f"Total: Q{total:.2f}"
         )
+
+    def remove_item(self, row):
+
+        self.cart.pop(row)
+
+        self.refresh_cart()
 
     def complete_sale(self):
 
@@ -184,21 +336,26 @@ class SalesView(QWidget):
 
             return
 
+        customer_id = (
+            self.customer_combo.currentData()
+        )
+
         try:
 
-            create_sale(self.cart)
+            create_sale(
+                self.cart,
+                customer_id
+            )
 
             QMessageBox.information(
                 self,
-                "Éxito",
-                "Venta completada"
+                "Venta completada",
+                "La venta fue registrada correctamente"
             )
 
             self.cart.clear()
 
-            self.cart_list.clear()
-
-            self.update_total()
+            self.refresh_cart()
 
         except Exception as e:
 
