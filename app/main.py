@@ -6,6 +6,10 @@ from app.presentation.views.main_window import (
     MainWindow
 )
 
+from app.presentation.styles.theme import (
+    get_stylesheet
+)
+
 app = QApplication(sys.argv)
 
 # Styles
@@ -17,6 +21,10 @@ with open(
     app.setStyleSheet(f.read())
 
 window = MainWindow()
+
+app.setStyleSheet(
+    get_stylesheet()
+)
 
 window.show()
 

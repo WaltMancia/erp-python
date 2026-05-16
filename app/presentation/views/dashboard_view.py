@@ -4,13 +4,13 @@ from PySide6.QtWidgets import (
     QLabel,
     QGridLayout,
     QFrame,
-    QListWidget,
-    QListWidgetItem
+    QSizePolicy
 )
 
 from PySide6.QtCharts import (
     QChart,
     QChartView,
+    QPieSeries,
     QBarSeries,
     QBarSet,
     QBarCategoryAxis
@@ -21,12 +21,8 @@ from PySide6.QtGui import (
 )
 
 from app.application.usecases.dashboard_usecases import (
-    get_dashboard_metrics
-)
-
-from app.application.usecases.analytics_usecases import (
-    sales_by_day,
-    low_stock_products
+    get_dashboard_stats,
+    get_top_products
 )
 
 
@@ -60,6 +56,7 @@ class DashboardCard(QFrame):
         )
 
         layout.addWidget(title_label)
+
         layout.addWidget(value_label)
 
         self.setLayout(layout)
@@ -70,11 +67,7 @@ class DashboardView(QWidget):
     def __init__(self):
         super().__init__()
 
-        metrics = get_dashboard_metrics()
-
         main_layout = QVBoxLayout()
-
-        # ===== TITLE =====
 
         title = QLabel(
             "Dashboard"
@@ -86,81 +79,78 @@ class DashboardView(QWidget):
 
         main_layout.addWidget(title)
 
-        # ===== KPI GRID =====
+        stats = get_dashboard_stats()
 
-        grid = QGridLayout()
+        # ===== KPI CARDS =====
 
-        grid.setSpacing(20)
+        cards_layout = QGridLayout()
 
-        grid.addWidget(
+        cards_layout.addWidget(
             DashboardCard(
                 "Productos",
-                metrics["total_products"]
+                stats["products"]
             ),
             0,
             0
         )
 
-        grid.addWidget(
+        cards_layout.addWidget(
             DashboardCard(
-                "Stock Bajo",
-                metrics["low_stock"]
+                "Clientes",
+                stats["customers"]
             ),
             0,
             1
         )
 
-        grid.addWidget(
+        cards_layout.addWidget(
             DashboardCard(
                 "Ventas",
-                metrics["total_sales"]
+                stats["sales"]
+            ),
+            0,
+            2
+        )
+
+        cards_layout.addWidget(
+            DashboardCard(
+                "Ingresos",
+                f"Q{stats['revenue']:.2f}"
             ),
             1,
             0
         )
 
-        grid.addWidget(
+        cards_layout.addWidget(
             DashboardCard(
-                "Ingresos",
-                f"Q{metrics['revenue']:.2f}"
+                "Stock Bajo",
+                stats["low_stock"]
             ),
             1,
             1
         )
 
-        main_layout.addLayout(grid)
-
-        # ===== SALES CHART =====
-
-        chart_title = QLabel(
-            "Ventas por día"
+        main_layout.addLayout(
+            cards_layout
         )
 
-        chart_title.setObjectName(
-            "sectionTitle"
-        )
+        # ===== TOP PRODUCTS CHART =====
 
-        main_layout.addWidget(
-            chart_title
-        )
+        top_products = get_top_products()
 
-        sales_data = sales_by_day()
+        bar_set = QBarSet(
+            "Vendidos"
+        )
 
         categories = []
 
-        bar_set = QBarSet(
-            "Ventas"
-        )
-
-        for date, total in sales_data:
+        for product_id, qty in top_products:
 
             categories.append(
-                str(date)
+                f"ID {product_id}"
             )
 
-            bar_set.append(
-                float(total)
-            )
+            bar_set.append(qty)
 
         series = QBarSeries()
 
@@ -171,7 +161,7 @@ class DashboardView(QWidget):
         chart.addSeries(series)
 
         chart.setTitle(
-            "Ingresos diarios"
+            "Top Productos Vendidos"
         )
 
         chart.setAnimationOptions(
@@ -189,10 +179,6 @@ class DashboardView(QWidget):
             series
         )
 
-        chart.legend().setVisible(
-            True
-        )
-
         chart_view = QChartView(chart)
 
         chart_view.setRenderHint(
@@ -203,36 +189,13 @@ class DashboardView(QWidget):
             350
         )
 
+        chart_view.setSizePolicy(
+            QSizePolicy.Expanding,
+            QSizePolicy.Expanding
+        )
+
         main_layout.addWidget(
             chart_view
-        )
-
-        # ===== LOW STOCK =====
-
-        low_stock_title = QLabel(
-            "Productos con stock bajo"
-        )
-
-        low_stock_title.setObjectName(
-            "sectionTitle"
-        )
-
-        main_layout.addWidget(
-            low_stock_title
-        )
-
-        low_stock_list = QListWidget()
-
-        for product in low_stock_products():
-
-            item = QListWidgetItem(
-                f"{product.name} | Stock: {product.stock}"
-            )
-
-            low_stock_list.addItem(item)
-
-        main_layout.addWidget(
-            low_stock_list
         )
 
         self.setLayout(main_layout)
