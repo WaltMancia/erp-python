@@ -214,5 +214,31 @@ def get_stylesheet():
         font-size: 15px;
         color: white;
     }
+    
+    /* ===== TOASTS ===== */
+
+    #toast-success {
+        background-color: #16a34a;
+        border-radius: 12px;
+        padding: 12px;
+        color: white;
+        font-weight: bold;
+    }
+
+    #toast-error {
+        background-color: #dc2626;
+        border-radius: 12px;
+        padding: 12px;
+        color: white;
+        font-weight: bold;
+    }
+
+    #toast-warning {
+        background-color: #f59e0b;
+        border-radius: 12px;
+        padding: 12px;
+        color: black;
+        font-weight: bold;
+    }
 
     """

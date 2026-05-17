@@ -12,6 +12,10 @@ from PySide6.QtWidgets import (
 
 from PySide6.QtWidgets import QFileDialog
 
+from app.presentation.components.toast import (
+    Toast
+)
+
 from app.services.pdf_service import (
     PDFService
 )
@@ -324,7 +328,7 @@ class ProductView(QWidget):
                 filename
             )
 
-            QMessageBox.information(
+            Toast(
                 self,
                 "Éxito",
                 "PDF exportado correctamente"
@@ -348,7 +352,7 @@ class ProductView(QWidget):
                 filename
             )
 
-            QMessageBox.information(
+            Toast(
                 self,
                 "Éxito",
                 "Excel exportado correctamente"
