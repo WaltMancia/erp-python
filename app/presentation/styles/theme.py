@@ -175,5 +175,44 @@ def get_stylesheet():
     QScrollBar::handle:vertical:hover {
         background: #475569;
     }
+    
+    /* ===== SIDEBAR ===== */
+
+    #sidebar {
+        background-color: #020617;
+        border-right: 1px solid #1e293b;
+    }
+
+    #sidebarLogo {
+        font-size: 24px;
+        font-weight: bold;
+        padding: 20px;
+        color: white;
+    }
+
+    #sidebarButton {
+        text-align: left;
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 6px;
+        background-color: transparent;
+        border: none;
+        font-size: 15px;
+    }
+
+    #sidebarButton:hover {
+        background-color: #1e293b;
+    }
+
+    #sidebarButtonActive {
+        text-align: left;
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 6px;
+        background-color: #2563eb;
+        border: none;
+        font-size: 15px;
+        color: white;
+    }
 
     """

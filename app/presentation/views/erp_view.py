@@ -8,6 +8,10 @@ from app.presentation.components.sidebar import (
     Sidebar
 )
 
+from app.presentation.views.dashboard_view import (
+    DashboardView
+)
+
 from app.presentation.views.product_view import (
     ProductView
 )
@@ -16,16 +20,12 @@ from app.presentation.views.inventory_view import (
     InventoryView
 )
 
-from app.presentation.views.sales_view import (
-    SalesView
-)
-
-from app.presentation.views.dashboard_view import (
-    DashboardView
-)
-
 from app.presentation.views.customer_view import (
     CustomerView
+)
+
+from app.presentation.views.sales_view import (
+    SalesView
 )
 
 from app.presentation.views.sales_history_view import (
@@ -40,6 +40,8 @@ class ERPView(QWidget):
 
         self.user = user
 
+        # ===== MAIN LAYOUT =====
+
         layout = QHBoxLayout()
 
         layout.setContentsMargins(
@@ -53,10 +55,7 @@ class ERPView(QWidget):
 
         # ===== SIDEBAR =====
 
-        self.sidebar = Sidebar(
-            user,
-            self.switch_view
-        )
+        self.sidebar = Sidebar(self)
 
         # ===== STACK =====
 
@@ -67,43 +66,51 @@ class ERPView(QWidget):
         self.views = {
 
             "dashboard": DashboardView(),
+
             "products": ProductView(
                 self.user
             ),
 
             "inventory": InventoryView(),
+
             "customers": CustomerView(),
+
             "sales": SalesView(),
+
             "sales_history": SalesHistoryView(),
         }
 
-        # ===== ADD TO STACK =====
+        # ===== ADD VIEWS TO STACK =====
 
         for view in self.views.values():
 
             self.stack.addWidget(view)
 
+        # ===== LAYOUT =====
+
         layout.addWidget(self.sidebar)
+
         layout.addWidget(self.stack)
 
         self.setLayout(layout)
 
-        # ===== DEFAULT ROUTE =====
+        # ===== DEFAULT PAGE =====
 
-        self.switch_view(
+        self.switch_page(
             "dashboard"
         )
 
-    def switch_view(self, route):
+    def switch_page(
+        self,
+        page_name
+    ):
 
-        view = self.views.get(route)
-
-        if view:
+        if page_name in self.views:
 
             self.stack.setCurrentWidget(
-                view
+                self.views[page_name]
             )
 
             self.sidebar.set_active(
-                route
+                page_name
             )
