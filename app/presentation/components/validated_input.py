@@ -2,34 +2,27 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QLabel,
-    QLineEdit
+    QLineEdit,
+    QSpinBox,
+    QDoubleSpinBox
 )
 
 
-class ValidatedLineEdit(QWidget):
+class BaseValidatedWidget(QWidget):
 
-    def __init__(
-        self,
-        placeholder=""
-    ):
+    def __init__(self):
         super().__init__()
 
-        layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
 
-        layout.setContentsMargins(
+        self.layout.setContentsMargins(
             0,
             0,
             0,
             0
         )
 
-        layout.setSpacing(4)
-
-        self.input = QLineEdit()
-
-        self.input.setPlaceholderText(
-            placeholder
-        )
+        self.layout.setSpacing(4)
 
         self.error_label = QLabel()
 
@@ -39,23 +32,9 @@ class ValidatedLineEdit(QWidget):
 
         self.error_label.hide()
 
-        layout.addWidget(
-            self.input
+        self.setLayout(
+            self.layout
         )
-
-        layout.addWidget(
-            self.error_label
-        )
-
-        self.setLayout(layout)
-
-    def text(self):
-
-        return self.input.text()
-
-    def setText(self, value):
-
-        self.input.setText(value)
 
     def set_error(self, message):
 
@@ -92,3 +71,104 @@ class ValidatedLineEdit(QWidget):
         )
 
         self.error_label.hide()
+
+
+class ValidatedLineEdit(
+    BaseValidatedWidget
+):
+
+    def __init__(
+        self,
+        placeholder=""
+    ):
+        super().__init__()
+
+        self.input = QLineEdit()
+
+        self.input.setPlaceholderText(
+            placeholder
+        )
+
+        self.layout.addWidget(
+            self.input
+        )
+
+        self.layout.addWidget(
+            self.error_label
+        )
+
+    def text(self):
+
+        return self.input.text()
+
+    def setText(self, value):
+
+        self.input.setText(value)
+
+
+class ValidatedSpinBox(
+    BaseValidatedWidget
+):
+
+    def __init__(self):
+        super().__init__()
+
+        self.input = QSpinBox()
+
+        self.layout.addWidget(
+            self.input
+        )
+
+        self.layout.addWidget(
+            self.error_label
+        )
+
+    def value(self):
+
+        return self.input.value()
+
+    def setValue(self, value):
+
+        self.input.setValue(value)
+
+    def setMaximum(self, value):
+
+        self.input.setMaximum(value)
+
+
+class ValidatedDoubleSpinBox(
+    BaseValidatedWidget
+):
+
+    def __init__(self):
+        super().__init__()
+
+        self.input = QDoubleSpinBox()
+
+        self.layout.addWidget(
+            self.input
+        )
+
+        self.layout.addWidget(
+            self.error_label
+        )
+
+    def value(self):
+
+        return self.input.value()
+
+    def setValue(self, value):
+
+        self.input.setValue(value)
+
+    def setMaximum(self, value):
+
+        self.input.setMaximum(value)
+
+    def setDecimals(self, value):
+
+        self.input.setDecimals(value)
+
+    def setPrefix(self, value):
+
+        self.input.setPrefix(value)

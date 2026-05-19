@@ -1,10 +1,8 @@
 from PySide6.QtWidgets import (
     QLabel,
-    QSpinBox,
     QPushButton,
     QHBoxLayout,
-    QWidget,
-    QDoubleSpinBox
+    QWidget
 )
 
 from app.presentation.components.base_dialog import (
@@ -12,7 +10,9 @@ from app.presentation.components.base_dialog import (
 )
 
 from app.presentation.components.validated_input import (
-    ValidatedLineEdit
+    ValidatedLineEdit,
+    ValidatedSpinBox,
+    ValidatedDoubleSpinBox
 )
 
 
@@ -36,7 +36,9 @@ class ProductDialog(BaseDialog):
 
         # ===== PRICE =====
 
-        self.price_input = QDoubleSpinBox()
+        self.price_input = (
+            ValidatedDoubleSpinBox()
+        )
 
         self.price_input.setMaximum(
             999999
@@ -50,7 +52,9 @@ class ProductDialog(BaseDialog):
 
         # ===== STOCK =====
 
-        self.stock_input = QSpinBox()
+        self.stock_input = (
+            ValidatedSpinBox()
+        )
 
         self.stock_input.setMaximum(
             999999
@@ -150,6 +154,10 @@ class ProductDialog(BaseDialog):
 
         self.name_input.clear_error()
 
+        self.price_input.clear_error()
+
+        self.stock_input.clear_error()
+
         # ===== NAME =====
 
         if not self.name_input.text().strip():
@@ -164,11 +172,19 @@ class ProductDialog(BaseDialog):
 
         if self.price_input.value() <= 0:
 
+            self.price_input.set_error(
+                "El precio debe ser mayor a 0"
+            )
+
             valid = False
 
         # ===== STOCK =====
 
         if self.stock_input.value() < 0:
+
+            self.stock_input.set_error(
+                "Stock inválido"
+            )
 
             valid = False
 
