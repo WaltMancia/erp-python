@@ -1,60 +1,29 @@
 from PySide6.QtWidgets import (
-    QDialog,
-    QVBoxLayout,
     QLabel,
     QLineEdit,
+    QSpinBox,
     QPushButton,
-    QMessageBox,
     QHBoxLayout,
-    QWidget
+    QWidget,
+    QDoubleSpinBox
 )
 
-from PySide6.QtCore import Qt
-
-from app.core.exceptions import (
-    ValidationError
+from app.presentation.components.base_dialog import (
+    BaseDialog
 )
 
 
-class ProductDialog(QDialog):
+class ProductDialog(BaseDialog):
 
     def __init__(
         self,
         product=None
     ):
-        super().__init__()
-
-        self.product = product
-
-        self.setWindowTitle(
+        super().__init__(
             "Producto"
         )
 
-        self.setMinimumWidth(420)
-
-        self.setObjectName(
-            "productDialog"
-        )
-
-        layout = QVBoxLayout()
-
-        layout.setSpacing(14)
-
-        # ===== TITLE =====
-
-        title = QLabel()
-
-        title.setText(
-            "Editar producto"
-            if product
-            else "Nuevo producto"
-        )
-
-        title.setObjectName(
-            "dialogTitle"
-        )
-
-        layout.addWidget(title)
+        self.product = product
 
         # ===== NAME =====
 
@@ -64,90 +33,29 @@ class ProductDialog(QDialog):
             "Nombre del producto"
         )
 
-        layout.addWidget(
-            QLabel("Nombre")
-        )
-
-        layout.addWidget(
-            self.name_input
-        )
-
         # ===== PRICE =====
 
-        self.price_input = QLineEdit()
+        self.price_input = QDoubleSpinBox()
 
-        self.price_input.setPlaceholderText(
-            "0.00"
+        self.price_input.setMaximum(
+            999999
         )
 
-        layout.addWidget(
-            QLabel("Precio")
-        )
+        self.price_input.setDecimals(2)
 
-        layout.addWidget(
-            self.price_input
+        self.price_input.setPrefix(
+            "Q "
         )
 
         # ===== STOCK =====
 
-        self.stock_input = QLineEdit()
+        self.stock_input = QSpinBox()
 
-        self.stock_input.setPlaceholderText(
-            "0"
+        self.stock_input.setMaximum(
+            999999
         )
 
-        layout.addWidget(
-            QLabel("Stock inicial")
-        )
-
-        layout.addWidget(
-            self.stock_input
-        )
-
-        # ===== ERROR LABEL =====
-
-        self.error_label = QLabel()
-
-        self.error_label.setObjectName(
-            "errorLabel"
-        )
-
-        self.error_label.hide()
-
-        layout.addWidget(
-            self.error_label
-        )
-
-        # ===== BUTTONS =====
-
-        buttons = QHBoxLayout()
-
-        cancel_btn = QPushButton(
-            "Cancelar"
-        )
-
-        save_btn = QPushButton(
-            "Guardar"
-        )
-
-        save_btn.setObjectName(
-            "primary"
-        )
-
-        cancel_btn.clicked.connect(
-            self.reject
-        )
-
-        save_btn.clicked.connect(
-            self.validate
-        )
-
-        buttons.addWidget(cancel_btn)
-        buttons.addWidget(save_btn)
-
-        layout.addLayout(buttons)
-
-        # ===== LOAD PRODUCT =====
+        # ===== LOAD DATA =====
 
         if product:
 
@@ -155,79 +63,88 @@ class ProductDialog(QDialog):
                 product.name
             )
 
-            self.price_input.setText(
-                str(product.price)
+            self.price_input.setValue(
+                float(product.price)
             )
 
-            self.stock_input.setText(
-                str(product.stock)
+            self.stock_input.setValue(
+                product.stock
             )
 
-        self.setLayout(layout)
+        # ===== BUTTONS =====
 
-    def validate(self):
+        buttons = QWidget()
 
-        try:
+        buttons_layout = QHBoxLayout()
 
-            name = (
-                self.name_input.text()
-                .strip()
-            )
-
-            if len(name) < 3:
-
-                raise ValidationError(
-                    "El nombre debe tener al menos 3 caracteres"
-                )
-
-            price = float(
-                self.price_input.text()
-            )
-
-            if price <= 0:
-
-                raise ValidationError(
-                    "El precio debe ser mayor a 0"
-                )
-
-            stock = int(
-                self.stock_input.text()
-            )
-
-            if stock < 0:
-
-                raise ValidationError(
-                    "El stock no puede ser negativo"
-                )
-
-            self.accept()
-
-        except ValueError:
-
-            self.show_error(
-                "Datos inválidos"
-            )
-
-        except ValidationError as e:
-
-            self.show_error(str(e))
-
-    def show_error(self, message):
-
-        self.error_label.setText(
-            message
+        self.cancel_btn = QPushButton(
+            "Cancelar"
         )
 
-        self.error_label.show()
+        self.save_btn = QPushButton(
+            "Guardar"
+        )
+
+        self.save_btn.setObjectName(
+            "primary"
+        )
+
+        self.cancel_btn.clicked.connect(
+            self.reject
+        )
+
+        self.save_btn.clicked.connect(
+            self.accept
+        )
+
+        buttons_layout.addWidget(
+            self.cancel_btn
+        )
+
+        buttons_layout.addWidget(
+            self.save_btn
+        )
+
+        buttons.setLayout(
+            buttons_layout
+        )
+
+        # ===== ADD TO LAYOUT =====
+
+        self.layout.addWidget(
+            QLabel("Nombre")
+        )
+
+        self.layout.addWidget(
+            self.name_input
+        )
+
+        self.layout.addWidget(
+            QLabel("Precio")
+        )
+
+        self.layout.addWidget(
+            self.price_input
+        )
+
+        self.layout.addWidget(
+            QLabel("Stock")
+        )
+
+        self.layout.addWidget(
+            self.stock_input
+        )
+
+        self.layout.addStretch()
+
+        self.layout.addWidget(
+            buttons
+        )
 
     def get_data(self):
 
         return {
             "name": self.name_input.text(),
-            "price": float(
-                self.price_input.text()
-            ),
-            "stock": int(
-                self.stock_input.text()
-            )
+            "price": self.price_input.value(),
+            "stock": self.stock_input.value()
         }

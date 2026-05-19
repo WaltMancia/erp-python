@@ -240,5 +240,20 @@ def get_stylesheet():
         color: black;
         font-weight: bold;
     }
+    
+    /* ===== DIALOGS ===== */
+
+#dialogContainer {
+    background-color: #111827;
+    border-radius: 18px;
+    border: 1px solid #334155;
+}
+
+#dialogTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
 
     """
