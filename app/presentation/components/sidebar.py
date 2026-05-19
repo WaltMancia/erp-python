@@ -2,25 +2,23 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QPushButton,
-    QLabel
+    QLabel,
+    QSizePolicy
 )
 
-from PySide6.QtGui import (
-    QIcon
-)
-
-from PySide6.QtCore import QSize
+from PySide6.QtCore import Qt
 
 
 class Sidebar(QWidget):
 
     def __init__(
         self,
-        parent=None
+        user,
+        navigate
     ):
         super().__init__()
 
-        self.parent = parent
+        self.navigate = navigate
 
         self.buttons = {}
 
@@ -28,9 +26,18 @@ class Sidebar(QWidget):
             "sidebar"
         )
 
-        self.setFixedWidth(240)
+        self.setFixedWidth(280)
 
         layout = QVBoxLayout()
+
+        layout.setContentsMargins(
+            14,
+            20,
+            14,
+            20
+        )
+
+        layout.setSpacing(12)
 
         # ===== LOGO =====
 
@@ -39,121 +46,104 @@ class Sidebar(QWidget):
         )
 
         logo.setObjectName(
-            "sidebarLogo"
+            "logoText"
         )
 
-        layout.addWidget(logo)
-
-        # ===== NAVIGATION =====
-
-        self.add_nav_button(
-            layout,
-            "dashboard",
-            "Dashboard",
-            "app/presentation/assets/icons/dashboard.svg"
+        layout.addWidget(
+            logo
         )
 
-        self.add_nav_button(
-            layout,
-            "products",
-            "Productos",
-            "app/presentation/assets/icons/products.svg"
-        )
+        layout.addSpacing(20)
 
-        self.add_nav_button(
-            layout,
-            "inventory",
-            "Inventario",
-            "app/presentation/assets/icons/inventory.svg"
-        )
+        # ===== MENU =====
 
-        self.add_nav_button(
-            layout,
-            "customers",
-            "Clientes",
-            "app/presentation/assets/icons/customers.svg"
-        )
+        menu_items = [
 
-        self.add_nav_button(
-            layout,
-            "sales",
-            "Ventas",
-            "app/presentation/assets/icons/sales.svg"
-        )
+            ("Dashboard", "dashboard"),
+            ("Productos", "products"),
+            ("Inventario", "inventory"),
+            ("Clientes", "customers"),
+            ("Ventas", "sales"),
+            ("Historial", "sales_history")
+        ]
 
-        self.add_nav_button(
-            layout,
-            "sales_history",
-            "Historial",
-            "app/presentation/assets/icons/reports.svg"
-        )
+        for text, route in menu_items:
+
+            btn = QPushButton(text)
+
+            btn.setCursor(
+                Qt.PointingHandCursor
+            )
+
+            btn.setProperty(
+                "class",
+                "sidebarButton"
+            )
+
+            btn.setObjectName(
+                "sidebarButton"
+            )
+
+            btn.setMinimumHeight(54)
+
+            btn.clicked.connect(
+                lambda _, r=route:
+                self.navigate(r)
+            )
+
+            layout.addWidget(btn)
+
+            self.buttons[route] = btn
 
         layout.addStretch()
 
+        # ===== USER =====
+
+        user_label = QLabel(
+            f"{user.username}\n{user.role.upper()}"
+        )
+
+        user_label.setStyleSheet("""
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 10px;
+        """)
+
+        layout.addWidget(
+            user_label
+        )
+
         self.setLayout(layout)
 
-    def add_nav_button(
-        self,
-        layout,
-        key,
-        text,
-        icon_path
-    ):
+    def set_active(self, route):
 
-        btn = QPushButton(text)
+        for r, btn in self.buttons.items():
 
-        btn.setObjectName(
-            "sidebarButton"
-        )
+            if r == route:
 
-        btn.setIcon(
-            QIcon(icon_path)
-        )
-
-        btn.setIconSize(
-            QSize(20, 20)
-        )
-
-        btn.clicked.connect(
-            lambda:
-            self.change_page(key)
-        )
-
-        layout.addWidget(btn)
-
-        self.buttons[key] = btn
-
-    def change_page(
-        self,
-        page
-    ):
-
-        if self.parent:
-
-            self.parent.switch_page(
-                page
-            )
-
-        self.set_active(page)
-
-    def set_active(
-        self,
-        active_key
-    ):
-
-        for key, btn in self.buttons.items():
-
-            if key == active_key:
-
-                btn.setObjectName(
+                btn.setProperty(
+                    "class",
                     "sidebarButtonActive"
                 )
 
+                btn.setStyleSheet("""
+                    background-color: #2563eb;
+                    color: white;
+                    border-radius: 14px;
+                    text-align: left;
+                    padding: 14px 18px;
+                    font-size: 15px;
+                    font-weight: 600;
+                """)
+
             else:
 
-                btn.setObjectName(
-                    "sidebarButton"
-                )
-
-            btn.style().unpolish(btn)
-            btn.style().polish(btn)
+                btn.setStyleSheet("""
+                    background-color: transparent;
+                    color: #cbd5e1;
+                    border-radius: 14px;
+                    text-align: left;
+                    padding: 14px 18px;
+                    font-size: 15px;
+                    font-weight: 600;
+                """)

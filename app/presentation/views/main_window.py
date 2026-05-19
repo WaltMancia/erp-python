@@ -30,6 +30,10 @@ class MainWindow(QMainWindow):
             self.login_success
         )
 
+        self.setObjectName(
+            "mainContainer"
+        )
+
         self.stack.addWidget(
             self.login_view
         )
