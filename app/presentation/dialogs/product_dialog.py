@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import (
     QLabel,
-    QLineEdit,
     QSpinBox,
     QPushButton,
     QHBoxLayout,
@@ -10,6 +9,10 @@ from PySide6.QtWidgets import (
 
 from app.presentation.components.base_dialog import (
     BaseDialog
+)
+
+from app.presentation.components.validated_input import (
+    ValidatedLineEdit
 )
 
 
@@ -27,9 +30,7 @@ class ProductDialog(BaseDialog):
 
         # ===== NAME =====
 
-        self.name_input = QLineEdit()
-
-        self.name_input.setPlaceholderText(
+        self.name_input = ValidatedLineEdit(
             "Nombre del producto"
         )
 
@@ -94,7 +95,7 @@ class ProductDialog(BaseDialog):
         )
 
         self.save_btn.clicked.connect(
-            self.accept
+            self.submit
         )
 
         buttons_layout.addWidget(
@@ -109,7 +110,7 @@ class ProductDialog(BaseDialog):
             buttons_layout
         )
 
-        # ===== ADD TO LAYOUT =====
+        # ===== FORM =====
 
         self.layout.addWidget(
             QLabel("Nombre")
@@ -140,6 +141,44 @@ class ProductDialog(BaseDialog):
         self.layout.addWidget(
             buttons
         )
+
+    def validate(self):
+
+        valid = True
+
+        # ===== CLEAR ERRORS =====
+
+        self.name_input.clear_error()
+
+        # ===== NAME =====
+
+        if not self.name_input.text().strip():
+
+            self.name_input.set_error(
+                "El nombre es obligatorio"
+            )
+
+            valid = False
+
+        # ===== PRICE =====
+
+        if self.price_input.value() <= 0:
+
+            valid = False
+
+        # ===== STOCK =====
+
+        if self.stock_input.value() < 0:
+
+            valid = False
+
+        return valid
+
+    def submit(self):
+
+        if self.validate():
+
+            self.accept()
 
     def get_data(self):
 

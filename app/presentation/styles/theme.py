@@ -243,17 +243,29 @@ def get_stylesheet():
     
     /* ===== DIALOGS ===== */
 
-#dialogContainer {
-    background-color: #111827;
-    border-radius: 18px;
-    border: 1px solid #334155;
-}
+    #dialogContainer {
+        background-color: #111827;
+        border-radius: 18px;
+        border: 1px solid #334155;
+    }
 
-#dialogTitle {
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 10px;
-}
+    #dialogTitle {
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    /* ===== VALIDATION ===== */
+
+    #errorLabel {
+        color: #ef4444;
+        font-size: 12px;
+        padding-left: 4px;
+    }
+
+    #inputError {
+        border: 1px solid #ef4444;
+    }
 
     """
